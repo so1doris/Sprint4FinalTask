@@ -3,7 +3,7 @@ package daysteps
 import (
 	"errors"
 	"fmt"
-	"internal/spentcalories/spentcalories.go"
+	"github.com/Yandex-Practicum/tracker/internal/spentcalories"
 	"strconv"
 	"strings"
 	"time"
@@ -46,7 +46,10 @@ func DayActionInfo(data string, weight, height float64) string {
 	}
 	walkingDistanceM := stepLength * float64(steps)
 	walkingDistanceKm := walkingDistanceM / mInKm
-	lostСalories := WalkingSpentCalories(steps, weight, height, t)
+	lostСalories, err := spentcalories.WalkingSpentCalories(steps, weight, height, t)
+	if err != nil {
+		return ""
+	}
 	result := fmt.Sprintf("Количество шагов: %d.\nДистанция составила %.2f км.\nВы сожгли %.2f ккал.", steps, walkingDistanceKm, lostСalories)
 	return result
 }
