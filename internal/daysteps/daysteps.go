@@ -1,6 +1,11 @@
 package daysteps
 
 import (
+	"errors"
+	"fmt"
+	"internal/spentcalories/spentcalories.go"
+	"strconv"
+	"strings"
 	"time"
 )
 
@@ -12,9 +17,36 @@ const (
 )
 
 func parsePackage(data string) (int, time.Duration, error) {
-	// TODO: реализовать функцию
+	list := strings.Split(data, ",")
+	if len(list) != 2 {
+		return 0, 0, errors.New("неверный формат данных")
+	}
+	steps, err := strconv.Atoi(list[0])
+	if err != nil {
+		return 0, 0, err
+	}
+	if steps < 1 {
+		return 0, 0, errors.New("Число шагов = 0, надо подвигаться")
+	}
+	t, err := time.ParseDuration(list[1])
+	if err != nil {
+		return 0, 0, err
+	}
+	return steps, t, nil
 }
 
 func DayActionInfo(data string, weight, height float64) string {
-	// TODO: реализовать функцию
+	steps, t, err := parsePackage(data)
+	if err != nil {
+		fmt.Errorf("Ошибка входных данных")
+		return ""
+	}
+	if steps < 1 {
+		return ""
+	}
+	walkingDistanceM := stepLength * float64(steps)
+	walkingDistanceKm := walkingDistanceM / mInKm
+	lostСalories := WalkingSpentCalories(steps, weight, height, t)
+	result := fmt.Sprintf("Количество шагов: %d.\nДистанция составила %.2f км.\nВы сожгли %.2f ккал.", steps, walkingDistanceKm, lostСalories)
+	return result
 }
